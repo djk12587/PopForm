@@ -7,13 +7,13 @@
 
 import UIKit
 
-enum DefaultFormFieldFormatter: FormFieldFormatter {
+public enum DefaultFormFieldFormatter: FormFieldFormatter {
     case none
     case zipCode
     case phoneNumber
     case custom((UITextField) -> Void)
 
-    func format(textField: UITextField) -> Void {
+    public func format(textField: UITextField) -> Void {
         switch self {
             case .none:
                 break
