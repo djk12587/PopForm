@@ -63,7 +63,6 @@ public class Form<TextFormField, Delegate: FormDelegate> where TextFormField == 
     }
 
     private func checkFormFieldsValidationState() {
-        let allTextFormFieldsAreValidated = !formFields.contains(where: { $0.validationState != .valid })
-        delegate?.formValidationChanged(allTextFormFieldsAreValidated: allTextFormFieldsAreValidated)
+        delegate?.formValidationChanged(allTextFormFieldsAreValidated: isValid)
     }
 }
