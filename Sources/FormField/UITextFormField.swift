@@ -28,7 +28,7 @@ import UIKit
 
 
 
-public class UIFormTextField: UITextField, ValidatableFormField {
+open class UIFormTextField: UITextField, ValidatableFormField {
     weak public var validationListener: FormFieldValidationListener?
     public var validator: (() -> FormFieldValidationState)?
     public var validationState: FormFieldValidationState = .unknown {
@@ -39,7 +39,7 @@ public class UIFormTextField: UITextField, ValidatableFormField {
     }
 }
 
-public class UIFormDatePicker: UIDatePicker, ValidatableFormField {
+open class UIFormDatePicker: UIDatePicker, ValidatableFormField {
     public weak var validationListener: FormFieldValidationListener?
     public var validator: (() -> FormFieldValidationState)?
     public var validationState: FormFieldValidationState = .unknown {
