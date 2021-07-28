@@ -19,6 +19,7 @@ public protocol ValidatableFormField: AnyObject {
 
     init(validator: (() -> FormFieldValidationState)?)
     func setValidation(validator: @escaping () -> FormFieldValidationState)
+    func validationStateDidChange()
 }
 
 public extension ValidatableFormField {
@@ -30,6 +31,8 @@ public extension ValidatableFormField {
     func set(validationListener: FormFieldValidationListener) {
         self.validationListener = validationListener
     }
+
+    func validationStateDidChange() {}
 }
 
 public extension ValidatableFormField where Self: UIControl {

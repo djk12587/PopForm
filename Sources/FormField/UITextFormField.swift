@@ -30,14 +30,24 @@ import UIKit
 
 public class UIFormTextField: UITextField, ValidatableFormField {
     weak public var validationListener: FormFieldValidationListener?
-    public var validationState: FormFieldValidationState = .unknown
     public var validator: (() -> FormFieldValidationState)?
+    public var validationState: FormFieldValidationState = .unknown {
+        didSet {
+            guard validationState != oldValue else { return }
+            validationStateDidChange()
+        }
+    }
 }
 
 public class UIFormDatePicker: UIDatePicker, ValidatableFormField {
     public weak var validationListener: FormFieldValidationListener?
-    public var validationState: FormFieldValidationState = .unknown
     public var validator: (() -> FormFieldValidationState)?
+    public var validationState: FormFieldValidationState = .unknown {
+        didSet {
+            guard validationState != oldValue else { return }
+            validationStateDidChange()
+        }
+    }
 }
 
 
