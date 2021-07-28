@@ -5,8 +5,9 @@
 //  Created by Dan Koza on 7/26/21.
 //
 
-import Foundation
+import UIKit
 
-public protocol FormFieldValidator {
-    func validate(text: String) -> FormFieldValidationState
-}
+//public protocol FormFieldValidator {
+//    associatedtype ValidateType
+//    func validate(contents: ValidateType) -> FormFieldValidationState
+//}
