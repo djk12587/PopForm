@@ -15,17 +15,22 @@ public protocol ValidatableFormField: AnyObject {
 
     var validationListener: FormFieldValidationListener? { get set }
     var validationState: FormFieldValidationState { get set }
-    var validator: (() -> FormFieldValidationState)? { get set }
+    var validationHandler: (() -> FormFieldValidationState)? { get set }
+    var validationStateDidChangeHandler: (() -> Void)? { get set }
 
-    init(validator: (() -> FormFieldValidationState)?)
-    func setValidation(validator: @escaping () -> FormFieldValidationState)
-    func validationStateDidChange()
+    init(validator: (() -> FormFieldValidationState)?, validationStateDidChangeHandler: (() -> Void)?)
+    func setValidation(handler: @escaping () -> FormFieldValidationState)
+    func setValidationStateDidChangeHandler(handler: @escaping () -> Void)
 }
 
 public extension ValidatableFormField {
 
-    func setValidation(validator: @escaping () -> FormFieldValidationState) {
-        self.validator = validator
+    func setValidation(handler: @escaping () -> FormFieldValidationState) {
+        validationHandler = handler
+    }
+
+    func setValidationStateDidChangeHandler(handler: @escaping () -> Void) {
+        validationStateDidChangeHandler = handler
     }
 
     func set(validationListener: FormFieldValidationListener) {
@@ -35,14 +40,15 @@ public extension ValidatableFormField {
 
 public extension ValidatableFormField where Self: UIControl {
 
-    init(validator: (() -> FormFieldValidationState)?) {
+    init(validator: (() -> FormFieldValidationState)?, validationStateDidChangeHandler: (() -> Void)?) {
         self.init(frame: .zero)
-        self.validator = validator
+        self.validationHandler = validator
+        self.validationStateDidChangeHandler = validationStateDidChangeHandler
         setupEditingAction()
     }
 
-    func setValidation(validator: @escaping () -> FormFieldValidationState) {
-        self.validator = validator
+    func setValidation(handler: @escaping () -> FormFieldValidationState) {
+        validationHandler = handler
         setupEditingAction()
     }
 
@@ -55,8 +61,9 @@ public extension ValidatableFormField where Self: UIControl {
             guard let self = self else { return }
 
             let previousFormState = self.validationState
-            self.validationState = self.validator?() ?? .unknown
+            self.validationState = self.validationHandler?() ?? .unknown
             if previousFormState != self.validationState {
+                self.validationStateDidChangeHandler?()
                 self.validationListener?.validatableFormFieldWasEdited()
             }
         }

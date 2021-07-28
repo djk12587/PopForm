@@ -27,29 +27,17 @@ import UIKit
 //}
 
 open class UIFormTextField: UITextField, ValidatableFormField {
-    weak public var validationListener: FormFieldValidationListener?
-    public var validator: (() -> FormFieldValidationState)?
-    public var validationState: FormFieldValidationState = .unknown {
-        didSet {
-            guard validationState != oldValue else { return }
-            validationStateDidChange()
-        }
-    }
-
-    open func validationStateDidChange() {}
+    public weak var validationListener: FormFieldValidationListener?
+    public var validationHandler: (() -> FormFieldValidationState)?
+    public var validationStateDidChangeHandler: (() -> Void)?
+    public var validationState: FormFieldValidationState = .unknown
 }
 
 open class UIFormDatePicker: UIDatePicker, ValidatableFormField {
     public weak var validationListener: FormFieldValidationListener?
-    public var validator: (() -> FormFieldValidationState)?
-    public var validationState: FormFieldValidationState = .unknown {
-        didSet {
-            guard validationState != oldValue else { return }
-            validationStateDidChange()
-        }
-    }
-
-    open func validationStateDidChange() {}
+    public var validationHandler: (() -> FormFieldValidationState)?
+    public var validationStateDidChangeHandler: (() -> Void)?
+    public var validationState: FormFieldValidationState = .unknown
 }
 
 
