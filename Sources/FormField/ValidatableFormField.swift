@@ -17,9 +17,8 @@ public protocol ValidatableFormField: AnyObject {
     var validationState: FormFieldValidationState { get set }
     var validator: (() -> FormFieldValidationState)? { get set }
 
-    init(validator: (() -> FormFieldValidationState)?, validationListener: FormFieldValidationListener?)
+    init(validator: (() -> FormFieldValidationState)?)
     func setValidation(validator: @escaping () -> FormFieldValidationState)
-    func set(validationListener: FormFieldValidationListener)
 }
 
 public extension ValidatableFormField {
@@ -35,9 +34,8 @@ public extension ValidatableFormField {
 
 public extension ValidatableFormField where Self: UIControl {
 
-    init(validator: (() -> FormFieldValidationState)?, validationListener: FormFieldValidationListener? = nil) {
+    init(validator: (() -> FormFieldValidationState)?) {
         self.init(frame: .zero)
-        self.validationListener = validationListener
         self.validator = validator
         setupEditingAction()
     }
