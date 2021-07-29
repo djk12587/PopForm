@@ -17,19 +17,19 @@ public extension ValidatableFormField where Self: UIControl {
         setupControlEventListeners(send: nil)
     }
 
-    init(validationPredicate: (() -> FormFieldValidationState)?, validationStateDidChangeHandler: (() -> Void)?, send controlEvent: UIControl.Event?) {
+    init(validationPredicate: (() -> FormFieldValidationState)?, validationStateDidChangeHandler: (() -> Void)?, send controlEvent: UIControl.Event? = nil) {
         self.init(frame: .zero)
         self.validationPredicate = validationPredicate
         self.validationStateDidChangeHandler = validationStateDidChangeHandler
         setupControlEventListeners(send: controlEvent)
     }
 
-    func setValidation(predicate: @escaping () -> FormFieldValidationState, send controlEvent: UIControl.Event?) {
+    func setValidation(predicate: @escaping () -> FormFieldValidationState, send controlEvent: UIControl.Event? = nil) {
         validationPredicate = predicate
         setupControlEventListeners(send: controlEvent)
     }
 
-    func setValidationStateDidChange(handler: @escaping (() -> Void), send controlEvent: UIControl.Event?) {
+    func setValidationStateDidChange(handler: @escaping (() -> Void), send controlEvent: UIControl.Event? = nil) {
         validationStateDidChangeHandler = handler
         setupControlEventListeners(send: controlEvent)
     }
