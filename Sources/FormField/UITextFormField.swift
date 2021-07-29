@@ -40,6 +40,13 @@ open class UIFormDatePicker: UIDatePicker, ValidatableFormField {
     public var validationState: FormFieldValidationState = .unknown
 }
 
+open class UIFormSwitch: UISwitch, ValidatableFormField {
+    public weak var validationListener: FormFieldValidationListener?
+    public var validationHandler: (() -> FormFieldValidationState)?
+    public var validationStateDidChangeHandler: (() -> Void)?
+    public var validationState: FormFieldValidationState = .unknown
+}
+
 
 //class UIFormButton: UIButton, ValidatableFormField {
 //    internal var validationState: FormFieldValidationState = .unknown
