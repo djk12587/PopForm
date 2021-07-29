@@ -17,13 +17,13 @@ public class ValidatableForm {
     private weak var delegate: ValidatableFormDelegate?
     private lazy var savedValidity: Bool = { isValid }()
 
-    public var isValid: Bool { !formFields.contains(where: { !($0.validationHandler?() == .valid) }) }
+    public var isValid: Bool { !formFields.contains(where: { !($0.validationPredicate?() == .valid) }) }
 
     public init(fields: ValidatableFormField..., delegate: ValidatableFormDelegate? = nil) {
         self.formFields = fields
         self.delegate = delegate
         setupFormFieldValidityDelegates()
-        formFields.forEach { $0.validationListener = self }
+        formFields.forEach { $0.formFieldValidationDelegate = self }
     }
 
     public func set(delegate: ValidatableFormDelegate) {
@@ -31,7 +31,7 @@ public class ValidatableForm {
     }
 
     private func setupFormFieldValidityDelegates() {
-        formFields.forEach { $0.validationListener = self }
+        formFields.forEach { $0.formFieldValidationDelegate = self }
     }
 
     private func validateForm() {
@@ -46,8 +46,8 @@ public class ValidatableForm {
     }
 }
 
-extension ValidatableForm: FormFieldValidationListener {
-    public func validatableFormFieldWasEdited() {
+extension ValidatableForm: FormFieldValidationDelegate {
+    public func formFieldValidationStateChanged() {
         validateForm()
     }
 }
