@@ -59,13 +59,20 @@ public extension ValidatableFormField where Self: UIControl {
     private func setupEditingAction() {
         addAction(for: .allEditingEvents) { [weak self] in
             guard let self = self else { return }
+            self.validate()
+        }
+        addAction(for: .valueChanged) { [weak self] in
+            guard let self = self else { return }
+            self.validate()
+        }
+    }
 
-            let previousFormState = self.validationState
-            self.validationState = self.validationHandler?() ?? .unknown
-            if previousFormState != self.validationState {
-                self.validationStateDidChangeHandler?()
-                self.validationListener?.validatableFormFieldWasEdited()
-            }
+    private func validate() {
+        let previousFormState = self.validationState
+        self.validationState = self.validationHandler?() ?? .unknown
+        if previousFormState != self.validationState {
+            self.validationStateDidChangeHandler?()
+            self.validationListener?.validatableFormFieldWasEdited()
         }
     }
 }
