@@ -7,13 +7,7 @@
 
 import UIKit
 
-///Default implementation of a `ValidatableUIControl`
-public protocol ValidatableUIControl: ValidatableFormField where Self: UIControl {
-    /// The default `UIControl.Event` to listen to for validation changes
-    var defaultValidationControlEvent: UIControl.Event { get }
-}
-
-public extension ValidatableUIControl {
+public extension ValidatableFormField where Self: UIControl {
 
     /// Initializes a `ValidatableFormField` for a `UIControl`
     /// - Parameters:
@@ -23,23 +17,25 @@ public extension ValidatableUIControl {
     ///   - runValidation: After initializtion, this `BOOL` will execute the `validationPredicate`once.
     init(validationPredicate: (() -> FormFieldValidationState)?,
          validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?,
-         validateOn controlEvent: UIControl.Event? = nil,
+         validateOn controlEvents: [UIControl.Event] = [.allEvents],
          runValidation: Bool = false) {
 
         self.init(frame: .zero)
         self.validationPredicate = validationPredicate
         self.validationStateDidChangeHandler = validationStateDidChangeHandler
-        listen(for: controlEvent ?? defaultValidationControlEvent, sendEvent: runValidation)
+
+        listen(for: controlEvents)
+
+        if runValidation {
+            validate()
+        }
     }
 
     /// Sets the `validationPredicate`
     /// - Parameters:
     ///   - predicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
-    ///   - controlEvent: Validates the form field when the control sends a `controlEvent`. If you pass in nil, the `defaultValidationControlEvent` will be used
-    ///   - runValidation: After initializtion, this `BOOL` will execute the validation `predicate`once.
-    func setValidation(predicate: @escaping () -> FormFieldValidationState, for controlEvent: UIControl.Event? = nil, runValidation: Bool = false) {
+    func setValidation(predicate: @escaping () -> FormFieldValidationState) {
         validationPredicate = predicate
-        listen(for: controlEvent ?? defaultValidationControlEvent, sendEvent: runValidation)
     }
 
     /// Sets the `validationStateDidChangeHandler`
@@ -48,24 +44,22 @@ public extension ValidatableUIControl {
         validationStateDidChangeHandler = handler
     }
 
-    private func listen(for controlEvent: UIControl.Event, sendEvent: Bool) {
-        addAction(for: controlEvent) { [weak self] in
-            guard let self = self else { return }
-            self.validate()
-        }
-
-        if sendEvent {
-            self.sendActions(for: controlEvent)
-        }
-    }
-
-    private func validate() {
+    func validate() {
         let previousFormState = self.validationState
         self.validationState = self.validationPredicate?() ?? .unknown
 
         if previousFormState != self.validationState {
             self.validationStateDidChangeHandler?(self.validationState)
             self.formFieldValidationDelegate?.formFieldValidationStateChanged()
+        }
+    }
+
+    private func listen(for controlEvents: [UIControl.Event]) {
+        controlEvents.forEach { event in
+            addAction(for: event) { [weak self] in
+                guard let self = self else { return }
+                self.validate()
+            }
         }
     }
 }
@@ -99,56 +93,49 @@ private extension UIControl {
 
 //MARK: - Subclasses of common UIControls that now adhere to ValidatableUIControl
 
-open class UIFormTextField: UITextField, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .allEditingEvents }
+open class UIFormTextField: UITextField, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormDatePicker: UIDatePicker, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormDatePicker: UIDatePicker, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormSwitch: UISwitch, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormSwitch: UISwitch, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormButton: UIButton, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .allEvents }
+open class UIFormButton: UIButton, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormSegmentedControl: UISegmentedControl, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormSegmentedControl: UISegmentedControl, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormSlider: UISlider, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormSlider: UISlider, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .unknown
 }
 
-open class UIFormStepper: UIStepper, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormStepper: UIStepper, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
@@ -156,8 +143,7 @@ open class UIFormStepper: UIStepper, ValidatableUIControl {
 }
 
 @available(iOS 14.0, *)
-open class UIFormColorWell: UIColorWell, ValidatableUIControl {
-    public var defaultValidationControlEvent: UIControl.Event { .valueChanged }
+open class UIFormColorWell: UIColorWell, ValidatableFormField {
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
