@@ -13,11 +13,11 @@ public extension ValidatableFormField where Self: UIControl {
     /// - Parameters:
     ///   - validationPredicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     ///   - validationStateDidChangeHandler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
-    ///   - controlEvent: Validates the form field when the control sends a `controlEvent`. If you pass in nil, the `defaultValidationControlEvent` will be used
+    ///   - controlEvents: Validates the form field when the control sends one of the `controlEvents`.
     ///   - runValidation: After initializtion, this `BOOL` will execute the `validationPredicate`once.
-    init(validationPredicate: (() -> FormFieldValidationState)?,
-         validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?,
-         validateOn controlEvents: [UIControl.Event] = [.allEvents],
+    init(validationPredicate: (() -> FormFieldValidationState)? = nil,
+         validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)? = nil,
+         validateOn controlEvents: [UIControl.Event] = [.allEditingEvents, .valueChanged],
          runValidation: Bool = false) {
 
         self.init(frame: .zero)
