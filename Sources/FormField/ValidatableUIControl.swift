@@ -37,7 +37,7 @@ public extension ValidatableUIControl {
     ///   - predicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     ///   - controlEvent: Validates the form field when the control sends a `controlEvent`. If you pass in nil, the `defaultValidationControlEvent` will be used
     ///   - runValidation: After initializtion, this `BOOL` will execute the validation `predicate`once.
-    func setValidation(predicate: @escaping () -> FormFieldValidationState, for controlEvent: UIControl.Event? = nil, runValidation: Bool) {
+    func setValidation(predicate: @escaping () -> FormFieldValidationState, for controlEvent: UIControl.Event? = nil, runValidation: Bool = false) {
         validationPredicate = predicate
         listen(for: controlEvent ?? defaultValidationControlEvent, sendEvent: runValidation)
     }
