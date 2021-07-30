@@ -15,14 +15,13 @@ public class ValidatableForm {
 
     private let formFields: [ValidatableFormField]
     private weak var delegate: ValidatableFormDelegate?
-    private lazy var savedValidity: Bool = { isValid }()
+    private var wasValid: Bool?
 
-    public var isValid: Bool { !formFields.contains(where: { !($0.validationPredicate?() == .valid) }) }
+    public var isValid: Bool { !formFields.contains { !($0.validationPredicate?() == .valid) } }
 
     public init(fields: ValidatableFormField..., delegate: ValidatableFormDelegate? = nil) {
         self.formFields = fields
         self.delegate = delegate
-        setupFormFieldValidityDelegates()
         formFields.forEach { $0.formFieldValidationDelegate = self }
     }
 
@@ -30,17 +29,13 @@ public class ValidatableForm {
         self.delegate = delegate
     }
 
-    private func setupFormFieldValidityDelegates() {
-        formFields.forEach { $0.formFieldValidationDelegate = self }
-    }
-
     private func validateForm() {
         defer {
-            savedValidity = isValid
+            wasValid = isValid
         }
 
         let isValid = isValid
-        if savedValidity != isValid {
+        if wasValid != isValid {
             delegate?.formValidationChanged(formIsValid: isValid)
         }
     }

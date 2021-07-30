@@ -12,17 +12,19 @@ public protocol FormFieldValidationDelegate: AnyObject {
 }
 
 public protocol ValidatableFormField: AnyObject {
-
+    /// Delegate that broadcasts when the `FormFieldValidationState` changes
     var formFieldValidationDelegate: FormFieldValidationDelegate? { get set }
+    /// The current validation state of a `ValidatableFormField` states are `.valid`, `.invalid`, `.unknown`.
     var validationState: FormFieldValidationState { get set }
+    /// Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`.
     var validationPredicate: (() -> FormFieldValidationState)? { get set }
+    /// Callback intended to indicate when the `validationPredicate` returns a different `FormFieldValidationState`
     var validationStateDidChangeHandler: (() -> Void)? { get set }
+}
 
-    /// Initialize a ValidatableFormField with a`validationPredicate` or `validationStateDidChangeHandler`
-    /// - Parameters:
-    ///   - validationPredicate: Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`. The `validationPredicate`
-    ///   - validationStateDidChangeHandler: Callback intended to indicate when the `validationPredicate` returns a different `FormFieldValidationState`
-    init(validationPredicate: (() -> FormFieldValidationState)?, validationStateDidChangeHandler: (() -> Void)?)
+extension ValidatableFormField {
+    /// `Bool` indicating if the `ValidatableFormField` is current set to a `FormFieldValidationState` of `.valid`
+    var isValid: Bool { validationState == .valid }
 }
 
 public enum FormFieldValidationState {
