@@ -14,7 +14,7 @@ public protocol ValidatableUIControl: ValidatableFormField where Self: UIControl
 
 public extension ValidatableUIControl {
 
-    /// Initializes a `ValidatableFormField` for a `UIControl`. Before validation
+    /// Initializes a `ValidatableFormField` for a `UIControl`. After initialization, the `validationPredicate` & `validationStateDidChangeHandler` are always executed once.
     /// - Parameters:
     ///   - validationPredicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     ///   - validationStateDidChangeHandler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
@@ -32,7 +32,7 @@ public extension ValidatableUIControl {
         }
     }
 
-    /// Clears existing validationPredicates and sets up a brand new `validationPredicate`.
+    /// Clears existing validationPredicates and sets up a brand new `validationPredicate`. The predicate is executed before `setValidation(predicate:)` finishes.
     /// - Parameters:
     ///   - predicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     func setValidation(predicate: @escaping () -> FormFieldValidationState) {
@@ -41,7 +41,7 @@ public extension ValidatableUIControl {
         validate()
     }
 
-    /// Sets the `validationStateDidChangeHandler`
+    /// Sets the `validationStateDidChangeHandler`. The handler is executed before `setValidationStateDidChange(handler:)` finishes
     /// - Parameter handler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
     func setValidationStateDidChange(handler: @escaping ((FormFieldValidationState) -> Void)) {
         validationStateDidChangeHandler = handler
