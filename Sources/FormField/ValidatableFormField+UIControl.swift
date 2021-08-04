@@ -64,7 +64,14 @@ public extension ValidatableUIControl {
         return validationStateDidChange
     }
 
+    //Removes existing targets that were added by addAction(for controlEvents:, action:)
+    private func removeExistingListeners() {
+        objc_removeAssociatedObjects(self)
+    }
+
     private func listen(for controlEvents: [UIControl.Event]) {
+        removeExistingListeners()
+
         controlEvents.forEach { event in
             addAction(for: event) { [weak self] in
                 guard let self = self else { return }
@@ -77,6 +84,18 @@ public extension ValidatableUIControl {
 //MARK: - Workaround for setting up an action when a UIControl.Event is sent on a UIControl
 //Trying to call addTarget in a protocol extension causues a lot of issues with due to the @objc requirement
 //Workaround source - https://blog.natanrolnik.me/protocols-default-impl-control-handling
+private extension UIControl {
+    func addAction(for controlEvents: UIControl.Event, action: @escaping () -> Void) {
+        let wrapper = ClosureWrapper(closure: action)
+        addTarget(wrapper, action: #selector(ClosureWrapper.invoke), for: controlEvents)
+        ///"Because `wrapper` was created in the function scope, it would go away at the end of the function. To avoid that, we attach it to the `UIControl` itself using `objc_setAssociatedObject` - so whenever the `UIControl` is alive, the `wrapper` we just created will be kept in the memory as well." - https://blog.natanrolnik.me/protocols-default-impl-control-handling
+        objc_setAssociatedObject(self,
+                                 "[\(arc4random())]",
+                                 wrapper,
+                                 .OBJC_ASSOCIATION_RETAIN)
+    }
+}
+
 private class ClosureWrapper {
     let closure: () -> Void
 
@@ -86,22 +105,6 @@ private class ClosureWrapper {
 
     @objc func invoke() {
         closure()
-    }
-}
-
-private extension UIControl {
-    func addAction(for controlEvents: UIControl.Event, action: @escaping () -> Void) {
-        objc_removeAssociatedObjects(self)
-
-        let wrapper = ClosureWrapper(closure: action)
-        addTarget(wrapper, action: #selector(ClosureWrapper.invoke), for: controlEvents)
-        ///"Because `wrapper` was created in the function scope, it would go away at the end of the function. To avoid that, we attach it to the `UIControl` itself using `objc_setAssociatedObject` - so whenever the `UIControl` is alive, the `wrapper` we just created will be kept in the memory as well." - https://blog.natanrolnik.me/protocols-default-impl-control-handling
-        objc_setAssociatedObject(self,
-                                 "[\(arc4random())]",
-                                 wrapper,
-                                 .OBJC_ASSOCIATION_RETAIN)
-
-
     }
 }
 
