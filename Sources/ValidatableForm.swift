@@ -17,7 +17,7 @@ public class ValidatableForm {
     private weak var delegate: ValidatableFormDelegate?
     private var wasValid: Bool?
 
-    public var isValid: Bool { !formFields.contains { !($0.validationPredicate?() == .valid) } }
+    public var isValid: Bool { !formFields.contains { !($0.validationState == .valid) } }
 
     public init(fields: ValidatableFormField..., delegate: ValidatableFormDelegate? = nil) {
         self.formFields = fields
