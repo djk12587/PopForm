@@ -102,7 +102,7 @@ private extension UIControl {
 //MARK: - Subclasses of common UIControls that now adhere to ValidatableUIControl
 
 open class UIFormTextField: UITextField, ValidatableUIControl {
-    public var validationControlEvents: [UIControl.Event] { [.editingChanged] }
+    public var validationControlEvents: [UIControl.Event] { [.allEditingEvents] }
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
