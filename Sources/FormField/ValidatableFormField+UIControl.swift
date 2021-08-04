@@ -14,24 +14,19 @@ public protocol ValidatableUIControl: ValidatableFormField where Self: UIControl
 
 public extension ValidatableUIControl {
 
-    /// Initializes a `ValidatableFormField` for a `UIControl`
+    /// Initializes a `ValidatableFormField` for a `UIControl`. Before validation
     /// - Parameters:
     ///   - validationPredicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     ///   - validationStateDidChangeHandler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
-    ///   - runValidation: After initializtion, this `BOOL` will execute the `validationPredicate`once.
-    init(validationPredicate: (() -> FormFieldValidationState)?,
-         validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?,
-         runValidation: Bool = false) {
+    init(validationPredicate: @escaping () -> FormFieldValidationState,
+         validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)? = nil) {
 
         self.init(frame: .zero)
         self.validationPredicate = validationPredicate
         self.validationStateDidChangeHandler = validationStateDidChangeHandler
 
         listen(for: validationControlEvents)
-
-        if runValidation {
-            validate()
-        }
+        validate()
     }
 
     /// Clears existing validationPredicates and sets up a brand new `validationPredicate`.
@@ -40,21 +35,24 @@ public extension ValidatableUIControl {
     func setValidation(predicate: @escaping () -> FormFieldValidationState) {
         validationPredicate = predicate
         listen(for: validationControlEvents)
+        validate()
     }
 
     /// Sets the `validationStateDidChangeHandler`
     /// - Parameter handler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
     func setValidationStateDidChange(handler: @escaping ((FormFieldValidationState) -> Void)) {
         validationStateDidChangeHandler = handler
+        validate()
     }
 
     func validate() {
-        let previousFormState = self.validationState
-        self.validationState = self.validationPredicate?() ?? .unknown
 
-        if previousFormState != self.validationState {
-            self.validationStateDidChangeHandler?(self.validationState)
-            self.formFieldValidationDelegate?.formFieldValidationStateChanged()
+        let previousFormState = validationState
+        validationState = validationPredicate?() ?? .unknown
+
+        if previousFormState != validationState {
+            validationStateDidChangeHandler?(validationState)
+            formFieldValidationDelegate?.formFieldValidationStateChanged()
         }
     }
 

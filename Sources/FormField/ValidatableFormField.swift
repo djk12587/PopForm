@@ -29,6 +29,7 @@ extension ValidatableFormField {
 
 public enum FormFieldValidationState {
     case unknown
+    case `default`
     case invalid
     case valid
 }
