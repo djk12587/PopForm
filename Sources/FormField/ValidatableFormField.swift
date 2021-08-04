@@ -18,7 +18,7 @@ public protocol ValidatableFormField: AnyObject {
     var validationState: FormFieldValidationState { get set }
     /// Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`.
     var validationPredicate: (() -> FormFieldValidationState)? { get set }
-    /// Callback intended to indicate when the `validationPredicate` returns a different `FormFieldValidationState`
+    /// Callback intended to indicate when the `FormFieldValidationState` changes
     var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)? { get set }
 }
 

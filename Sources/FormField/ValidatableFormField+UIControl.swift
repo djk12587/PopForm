@@ -26,7 +26,10 @@ public extension ValidatableUIControl {
         self.validationStateDidChangeHandler = validationStateDidChangeHandler
 
         listen(for: validationControlEvents)
-        validate()
+        let validationStateDidChange = validate()
+        if !validationStateDidChange {
+            validationStateDidChangeHandler?(validationState)
+        }
     }
 
     /// Clears existing validationPredicates and sets up a brand new `validationPredicate`.
@@ -42,18 +45,23 @@ public extension ValidatableUIControl {
     /// - Parameter handler: Callback handler that used to trigger events when the `ValidatableFormField`'s `FormFieldValidationState` changes
     func setValidationStateDidChange(handler: @escaping ((FormFieldValidationState) -> Void)) {
         validationStateDidChangeHandler = handler
-        validate()
+        handler(validationState)
     }
 
-    func validate() {
+    /// Runs the validation
+    /// - Returns: A `Bool` indicating if the validationState did change
+    @discardableResult
+    func validate() -> Bool {
 
         let previousFormState = validationState
         validationState = validationPredicate?() ?? .unknown
 
-        if previousFormState != validationState {
+        let validationStateDidChange = previousFormState != validationState
+        if validationStateDidChange {
             validationStateDidChangeHandler?(validationState)
             formFieldValidationDelegate?.formFieldValidationStateChanged()
         }
+        return validationStateDidChange
     }
 
     private func listen(for controlEvents: [UIControl.Event]) {
