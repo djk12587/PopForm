@@ -34,7 +34,7 @@ public extension ValidatableUIControl {
         }
     }
 
-    /// Sets the `validationPredicate`
+    /// Clears existing validationPredicates and sets up a brand new `validationPredicate`.
     /// - Parameters:
     ///   - predicate: Logic  to determine when the `ValidatableFormField`'s `FormFieldValidationState`. This predicate is executed when the `UIControl` sends a `controlEvent`
     func setValidation(predicate: @escaping () -> FormFieldValidationState) {
@@ -83,21 +83,6 @@ private class ClosureWrapper {
     }
 }
 
-private class ClosureWrapperContainer {
-    static let shared = ClosureWrapperContainer()
-    private(set) var closureWrappers: [UIControl: [ClosureWrapper]] = [:]
-
-    func append(_ closureWrapper: ClosureWrapper, tiedTo control: UIControl) {
-        closureWrappers[control]?.append(closureWrapper)
-    }
-
-//    func clear
-
-//    @objc func invoke() {
-//        closure()
-//    }
-}
-
 private extension UIControl {
     func addAction(for controlEvents: UIControl.Event, action: @escaping () -> Void) {
         objc_removeAssociatedObjects(self)
@@ -117,7 +102,7 @@ private extension UIControl {
 //MARK: - Subclasses of common UIControls that now adhere to ValidatableUIControl
 
 open class UIFormTextField: UITextField, ValidatableUIControl {
-    public var validationControlEvents: [UIControl.Event] { [.allEditingEvents] }
+    public var validationControlEvents: [UIControl.Event] { [.editingChanged] }
     public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
