@@ -58,10 +58,10 @@ public extension ValidatableUIControl {
     @discardableResult
     func validate() -> Bool {
 
-        let previousFormState = validationState
+        let previousValidationState = validationState
         validationState = validationPredicate?() ?? .unknown
 
-        let validationStateDidChange = previousFormState != validationState
+        let validationStateDidChange = previousValidationState != validationState
         if validationStateDidChange {
             validationStateDidChangeHandler?(validationState)
             formFieldValidationDelegate?.formFieldValidationStateChanged()
