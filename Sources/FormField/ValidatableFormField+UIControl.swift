@@ -32,9 +32,9 @@ public extension ValidatableUIControl {
         }
     }
 
-    func set(validationTriggerEvents: UIControl.Event...) {
-        self.validationTriggerEvents = validationTriggerEvents
-        listen(for: validationTriggerEvents)
+    func setValidation(triggerEvents: UIControl.Event...) {
+        validationTriggerEvents = triggerEvents
+        listen(for: triggerEvents)
     }
 
     /// Clears existing validationPredicates and sets up a brand new `validationPredicate`. The predicate is executed before `setValidation(predicate:)` finishes.
