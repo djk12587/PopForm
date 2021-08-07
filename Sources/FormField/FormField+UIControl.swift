@@ -7,12 +7,12 @@
 
 import UIKit
 
-public protocol ValidatableUIControl: ValidatableFormField where Self: UIControl {
+public protocol FormFieldUIControl: FormField where Self: UIControl {
     /// Validates the form field when the control sends one of the `validationTriggerEvents`.
     var validationTriggerEvents: [UIControl.Event] { get set }
 }
 
-public extension ValidatableUIControl {
+public extension FormFieldUIControl {
 
     /// Initializes a `ValidatableFormField` for a `UIControl`. After initialization, the `validationPredicate` & `validationStateDidChangeHandler` are always executed once.
     /// - Parameters:
@@ -115,66 +115,66 @@ private class ClosureWrapper {
 
 //MARK: - Subclasses of common UIControls that now adhere to ValidatableUIControl
 
-open class UIFormTextField: UITextField, ValidatableUIControl {
+open class UIFormFieldTextField: UITextField, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.allEditingEvents]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormDatePicker: UIDatePicker, ValidatableUIControl {
+open class UIFormFieldDatePicker: UIDatePicker, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormSwitch: UISwitch, ValidatableUIControl {
+open class UIFormFieldSwitch: UISwitch, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormButton: UIButton, ValidatableUIControl {
+open class UIFormFieldButton: UIButton, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.touchUpInside]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormSegmentedControl: UISegmentedControl, ValidatableUIControl {
+open class UIFormFieldSegmentedControl: UISegmentedControl, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormSlider: UISlider, ValidatableUIControl {
+open class UIFormFieldSlider: UISlider, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
-open class UIFormStepper: UIStepper, ValidatableUIControl {
+open class UIFormFieldStepper: UIStepper, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default
 }
 
 @available(iOS 14.0, *)
-open class UIFormColorWell: UIColorWell, ValidatableUIControl {
+open class UIFormFieldColorWell: UIColorWell, FormFieldUIControl {
     public var validationTriggerEvents: [UIControl.Event] = [.valueChanged]
-    public weak var formFieldValidationDelegate: FormFieldValidationDelegate?
+    public weak var formFieldValidationDelegate: FormFieldDelegate?
     public var validationPredicate: (() -> FormFieldValidationState)?
     public var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)?
     public var validationState: FormFieldValidationState = .default

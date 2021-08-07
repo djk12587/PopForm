@@ -7,13 +7,13 @@
 
 import Foundation
 
-public protocol FormFieldValidationDelegate: AnyObject {
+public protocol FormFieldDelegate: AnyObject {
     func formFieldValidationStateChanged()
 }
 
-public protocol ValidatableFormField: AnyObject {
+public protocol FormField: AnyObject {
     /// Delegate that broadcasts when the `FormFieldValidationState` changes
-    var formFieldValidationDelegate: FormFieldValidationDelegate? { get set }
+    var formFieldValidationDelegate: FormFieldDelegate? { get set }
     /// The current validation state of a `ValidatableFormField` states are `.valid`, `.invalid`, `.unknown`.
     var validationState: FormFieldValidationState { get set }
     /// Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`.
@@ -22,7 +22,7 @@ public protocol ValidatableFormField: AnyObject {
     var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)? { get set }
 }
 
-extension ValidatableFormField {
+extension FormField {
     /// `Bool` indicating if the `ValidatableFormField` is current set to a `FormFieldValidationState` of `.valid`
     var isValid: Bool { validationState == .valid }
 }

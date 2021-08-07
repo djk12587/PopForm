@@ -11,15 +11,15 @@ public protocol ValidatableFormDelegate: AnyObject {
     func formValidationChanged(formIsValid: Bool)
 }
 
-public class ValidatableForm {
+public class Form {
 
-    private let formFields: [ValidatableFormField]
+    private let formFields: [FormField]
     private weak var delegate: ValidatableFormDelegate?
     private var wasValid: Bool?
 
     public var isValid: Bool { !formFields.contains { !($0.validationState == .valid) } }
 
-    public init(fields: ValidatableFormField..., delegate: ValidatableFormDelegate? = nil) {
+    public init(fields: FormField..., delegate: ValidatableFormDelegate? = nil) {
         self.formFields = fields
         self.delegate = delegate
         formFields.forEach { $0.formFieldValidationDelegate = self }
@@ -41,7 +41,7 @@ public class ValidatableForm {
     }
 }
 
-extension ValidatableForm: FormFieldValidationDelegate {
+extension Form: FormFieldDelegate {
     public func formFieldValidationStateChanged() {
         validateForm()
     }

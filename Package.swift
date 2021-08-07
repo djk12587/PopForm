@@ -4,16 +4,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "ValidatableForm",
+    name: "PopForm",
     platforms: [
         .iOS(.v9), .tvOS(.v9)
     ],
     products: [
-        .library(name: "ValidatableForm",
-                 targets: ["ValidatableForm"]),
+        .library(name: "PopForm",
+                 targets: ["PopForm"]),
     ],
     targets: [
-        .target(name: "ValidatableForm",
+        .target(name: "PopForm",
                 path: "Sources")
     ]
 )
