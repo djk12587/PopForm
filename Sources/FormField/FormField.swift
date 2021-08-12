@@ -14,9 +14,9 @@ public protocol FormFieldDelegate: AnyObject {
 public protocol FormField: AnyObject {
     /// Delegate that broadcasts when the `FormFieldValidationState` changes
     var formFieldValidationDelegate: FormFieldDelegate? { get set }
-    /// The current validation state of a `ValidatableFormField` states are `.valid`, `.invalid`, `.unknown`.
+    /// The current validation state of a `ValidatableFormField` states are `.valid`, `.invalid`, `.unknown`, `.default`.
     var validationState: FormFieldValidationState { get set }
-    /// Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`.
+    /// Put logic here to decide when the `ValidatableFormField` is either `.valid`, `.invalid`, `.unknown`, `.default`.
     var validationPredicate: (() -> FormFieldValidationState)? { get set }
     /// Callback intended to indicate when the `FormFieldValidationState` changes
     var validationStateDidChangeHandler: ((FormFieldValidationState) -> Void)? { get set }
