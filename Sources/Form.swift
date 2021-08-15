@@ -43,6 +43,15 @@ public class Form {
         validateForm()
     }
 
+    public func replace(with fields: FormField...) {
+        formFields.forEach { $0.formFieldValidationDelegate = nil }
+        formFields.removeAll()
+
+        fields.forEach { $0.formFieldValidationDelegate = self }
+        formFields = fields
+        validateForm()
+    }
+
     private func validateForm() {
         defer {
             wasValid = isValid
